@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: config-server
+  profiles:
+    active: git
+  cloud:
+    config:
+      server:
+        git:
+          uri: git@github.com:${USERNAME}/${GIT_REPO}
+          default-label: main
+          timeout: 5
+          clone-on-start: true
+          username: ${USERNAME}
+          password: ${PASSWORD}
+
+server:
+  port: 8888
