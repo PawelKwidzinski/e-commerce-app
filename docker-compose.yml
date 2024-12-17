@@ -1,51 +1,48 @@
 services:
-  product-postgresql:
-    container_name: product_postgres
-    restart: unless-stopped
+  postgresql:
+    container_name: ms_pg_sql
     image: postgres:17.0
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: pass
       PGDATA: /var/lib/postgresql/data
     volumes:
-      - product_postgres:/var/lib/postgresql/data
+      - postgres:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     networks:
       - e-commerce-net
-
-  product-pgadmin:
-    container_name: product_pgadmin
     restart: unless-stopped
+
+  pgadmin:
+    container_name: ms_pgadmin
     image: dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
       PGADMIN_CONFIG_SERVER_MODE: 'False'
     volumes:
-      - product_pgadmin:/var/lib/pgadmin
+      - pgadmin:/var/lib/pgadmin
     ports:
       - "5050:80"
     networks:
       - e-commerce-net
-
-  customer-mongodb:
-    image: mongo:6.0.17
-    container_name: customer_mongo_db
     restart: unless-stopped
+
+  mongodb:
+    image: mongo:6.0.17
+    container_name: mongo_db
     ports:
       - 27017:27017
     volumes:
-      - customer_mongo:/data
+      - mongo:/data
     environment:
       - MONGO_INITDB_ROOT_USERNAME=user
       - MONGO_INITDB_ROOT_PASSWORD=pass
-    networks:
-      - e-commerce-net
 
-  customer-mongo-express:
+  mongo-express:
     image: mongo-express:1.0.2
-    container_name: customer_mongo_express
+    container_name: mongo_express
     restart: unless-stopped
     ports:
       - 8081:8081
@@ -53,24 +50,19 @@ services:
       - ME_CONFIG_MONGODB_ADMINUSERNAME=user
       - ME_CONFIG_MONGODB_ADMINPASSWORD=pass
       - ME_CONFIG_MONGODB_SERVER=mongodb
-    networks:
-      - e-commerce-net
 
   mail-dev:
     container_name: ms-mail-dev
-    restart: unless-stopped
     image: maildev/maildev
     ports:
       - 1080:1080
       - 1025:1025
-    networks:
-      - e-commerce-net
 
 networks:
   e-commerce-net:
     driver: bridge
 
 volumes:
-  product_postgres:
-  product_pgadmin:
-  customer_mongo:
+  postgres:
+  pgadmin:
+  mongo:
