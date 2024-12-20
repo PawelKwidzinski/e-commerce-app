@@ -29,6 +29,36 @@ services:
     networks:
       - e-commerce-net
 
+  order-postgresql:
+    container_name: order_postgres
+    restart: unless-stopped
+    image: postgres:17.0
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - product_postgres:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - e-commerce-net
+
+  order-pgadmin:
+    container_name: order_pgadmin
+    restart: unless-stopped
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - product_pgadmin:/var/lib/pgadmin
+    ports:
+      - "5051:80"
+    networks:
+      - e-commerce-net
+
   customer-mongodb:
     image: mongo:6.0.17
     container_name: customer_mongo_db
@@ -56,9 +86,37 @@ services:
     networks:
       - e-commerce-net
 
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.8.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 22181:2181
+    networks:
+      - e-commerce-net
+
+  kafka:
+    image: confluentinc/cp-kafka:7.8.0
+    container_name: ms_kafka
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+    networks:
+      - e-commerce-net
+
   mail-dev:
     container_name: ms-mail-dev
-    restart: unless-stopped
     image: maildev/maildev
     ports:
       - 1080:1080
