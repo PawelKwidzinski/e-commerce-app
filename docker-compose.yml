@@ -38,7 +38,7 @@ services:
       POSTGRES_PASSWORD: pass
       PGDATA: /var/lib/postgresql/data
     volumes:
-      - product_postgres:/var/lib/postgresql/data
+      - order_postgres:/var/lib/postgresql/data
     ports:
       - "5433:5432"
     networks:
@@ -53,9 +53,39 @@ services:
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
       PGADMIN_CONFIG_SERVER_MODE: 'False'
     volumes:
-      - product_pgadmin:/var/lib/pgadmin
+      - order_pgadmin:/var/lib/pgadmin
     ports:
       - "5051:80"
+    networks:
+      - e-commerce-net
+
+  payment-postgresql:
+    container_name: payment_postgres
+    restart: unless-stopped
+    image: postgres:17.0
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - payment_postgres:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
+    networks:
+      - e-commerce-net
+
+  payment-pgadmin:
+    container_name: payment_pgadmin
+    restart: unless-stopped
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - payment_pgadmin:/var/lib/pgadmin
+    ports:
+      - "5052:80"
     networks:
       - e-commerce-net
 
@@ -131,4 +161,8 @@ networks:
 volumes:
   product_postgres:
   product_pgadmin:
+  order_postgres:
+  order_pgadmin:
+  payment_postgres:
+  payment_pgadmin:
   customer_mongo:

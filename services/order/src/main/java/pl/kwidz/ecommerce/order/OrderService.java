@@ -9,6 +9,8 @@ import pl.kwidz.ecommerce.kafka.OrderConfirmation;
 import pl.kwidz.ecommerce.kafka.OrderProducer;
 import pl.kwidz.ecommerce.orderline.OrderLineRequest;
 import pl.kwidz.ecommerce.orderline.OrderLineService;
+import pl.kwidz.ecommerce.payment.PaymentClient;
+import pl.kwidz.ecommerce.payment.PaymentRequest;
 import pl.kwidz.ecommerce.product.ProductClient;
 import pl.kwidz.ecommerce.product.PurchaseRequest;
 
@@ -25,6 +27,7 @@ public class OrderService {
     private final OrderRepository repository;
     private final OrderMapper mapper;
     private final OrderProducer orderProducer;
+    private final PaymentClient paymentClient;
 
     public Integer createOrder(OrderRequest request) {
         // check customer
@@ -48,7 +51,11 @@ public class OrderService {
                     )
             );
         }
-        // todo start payment process
+
+        // payment process
+        paymentClient.createPayment(new PaymentRequest(
+           request.amount(), request.paymentMethod(), request.id(), request.reference(), customer
+        ));
 
         // send the order confirmation -> notification-ms (kafka)
         orderProducer.sendOrderConfirmation(new OrderConfirmation(
