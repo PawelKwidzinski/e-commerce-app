@@ -13,11 +13,11 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 import pl.kwidz.ecommerce.kafka.order.Product;
 
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static pl.kwidz.ecommerce.email.EmailTemplates.ORDER_CONFIRMATION;
 import static pl.kwidz.ecommerce.email.EmailTemplates.PAYMENT_CONFIRMATION;
 
@@ -34,7 +34,7 @@ public class EmailService {
     public void sendPaymentSuccessEmail(String destinationEmail, String customerName, BigDecimal amount,
                                         String orderReference) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
-        MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
+        MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, UTF_8.name());
         messageHelper.setFrom("contact@e-shop.com");
 
         final String templateName = PAYMENT_CONFIRMATION.getTemplate();
