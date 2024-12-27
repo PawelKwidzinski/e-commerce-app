@@ -181,6 +181,14 @@ services:
     networks:
       - e-commerce-net
 
+  zipkin:
+    container_name: zipkin
+    image: openzipkin/zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - e-commerce-net
+
 networks:
   e-commerce-net:
     driver: bridge
