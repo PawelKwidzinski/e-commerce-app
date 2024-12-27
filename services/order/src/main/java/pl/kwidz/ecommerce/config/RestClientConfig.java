@@ -22,8 +22,8 @@ public class RestClientConfig {
     private String customerUrl;
     @Value("${application.config.product-url}")
     private String productUrl;
-    @Value("${application.config.order-url}")
-    private String orderUrl;
+    @Value("${application.config.payment-url}")
+    private String paymentUrl;
 
     @Bean
     public CustomerClient customerClient() {
@@ -50,7 +50,7 @@ public class RestClientConfig {
     @Bean
     public PaymentClient paymentClient() {
         RestClient restClient = RestClient.builder()
-                .baseUrl(orderUrl)
+                .baseUrl(paymentUrl)
                 .requestFactory(getClientRequestFactory())
                 .build();
         RestClientAdapter restClientAdapter = RestClientAdapter.create(restClient);
