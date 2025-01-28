@@ -92,7 +92,7 @@ server:
 ### Step-by-Step Instructions
 
 0. **Create Config Server Repository**:
-    Add necessary *.yml files for each microservice =>TODO<=
+    Add to config server repo a necessary *.yml files from each microservice =>TODO<=
 1. **Start Config Server**:
    Navigate to the `config-server` directory and run: ```mvn spring-boot:run```
 
